@@ -1,2 +1,2 @@
 # PC-Fan-ARGB-Multi-Stripe
-Simple Workaround for 1 End (without OUT Pin , 3Pin) ARGB Fans in PC-Cases 
+Simple Workaround for Multiple 1 End ARGB Fans in PC-Cases. (without OUT Pin , 3Pin)
