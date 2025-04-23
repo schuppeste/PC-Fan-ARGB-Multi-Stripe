@@ -26,12 +26,6 @@ serialPort.SetPort("COM7", 115200);
 // Connect the serial port
 serialPort.Connect();
 
-// Send a message
-//var message = System.Text.Encoding.UTF8.GetBytes("Hello World!");
-//serialPort.SendMessage(message);
-
-//SerialPort serialPort = new SerialPort("COM4", 115200); // Replace "COM3" with your serial port
-//serialPort.Open();
 Computer computer = new Computer
 {
     IsCpuEnabled = true,
@@ -45,12 +39,9 @@ Computer computer = new Computer
 
 while (true)
 {
-
     computer.Open();
     computer.Accept(new UpdateVisitor());
-
-
-
+    
     try
     {
         //serialPort.WriteLine($"\"{computer.Hardware[0].SubHardware[0].Sensors[22].Name}\": \"{computer.Hardware[0].SubHardware[0].Sensors[22].Value}\",\r\n");
@@ -89,8 +80,7 @@ else throw new Exception("Sensor 2 not found");
 else throw new Exception("Sensor 3 not found");
     serialPort.SendMessage(System.Text.Encoding.UTF8.GetBytes($"}}\r\n"));
         //   serialPort.WriteLine($"\"{computer.Hardware[0].SubHardware[0].Sensors[22].Name}\": \"{computer.Hardware[0].SubHardware[0].Sensors[22].Value}\",\r\n");
- //Console.WriteLine($"\"{computer.Hardware[0].SubHardware[0].Sensors[22].Name}\": \"{computer.Hardware[0].SubHardware[0].Sensors[22].Value}\",");
-        
+         
         /* Console.WriteLine($"{{");
          Console.WriteLine($"\"{computer.Hardware[0].SubHardware[0].Sensors[22].Name}\": \"{computer.Hardware[0].SubHardware[0].Sensors[22].Value}\",");
          Console.WriteLine($"\"{computer.Hardware[0].SubHardware[0].Sensors[23].Name}\": \"{computer.Hardware[0].SubHardware[0].Sensors[23].Value}\",");
