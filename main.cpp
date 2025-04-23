@@ -86,8 +86,6 @@ void setup() {
     delay(1000);
 }
  
-
-
 void loop() { 
   /*fill(CRGB::Blue,FAN_FRONT_1); 
   fill(CRGB::Red,FAN_FRONT_2);
@@ -105,11 +103,7 @@ serialEvent(); // Check for serial input
    deserializeJson(doc, inputString);
    inputString = ""; // Clear the string for new input
    stringComplete = false; 
-
-
-
-
-    for (int i = 0; i < NUMm_Strings; i++) {
+        for (int i = 0; i < NUMm_Strings; i++) {
         if (fanConfigs[i].index != -1 ) {
          fanConfigs[i].animationFunction(values[fanConfigs[i].index], fanConfigs[i].index);
         }
@@ -134,10 +128,8 @@ void serialEvent() {
           if (fanConfigs[i].index != -1) { // Nur Einträge mit gültigem Index
               values[fanConfigs[i].index] = mappedparsing(fanConfigs[i].jsonKey, fanConfigs[i].min, fanConfigs[i].max);
           }
-  
-      } 
-  
-  }
+        } 
+    }
 }
 }
 
@@ -173,8 +165,8 @@ int rgbset=0;
      fadeToBlackBy(leds[strip]+i,1,200); // Fade to black
    
 }   
-  }}
-
+  }
+}
 
 //Prozent Color Blending as 1 Stripe one Color
 void setRGBRingoneColorBlending(int value,int strip){
