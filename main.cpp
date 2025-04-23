@@ -229,10 +229,10 @@ void setRGBRingoneColorFading(int value, int strip) {
           leds[strip][i] = blend(colorStart, colorEnd, (progress - 170) * 3); // 170–255 wird auf 0–255 skaliert
       }
 
-      // Helle LEDs für die aktuelle Stufe hervorheben
+      // Blaue LEDs für die aktuelle Stufe hervorheben
       int highlightIndex = map(value, 0, 100, 0, NUMm_LEDS - 1); // Mappe Prozent auf LED-Index
       if (i == highlightIndex || i == (highlightIndex + 1) % NUMm_LEDS || i == (highlightIndex -1) % NUMm_LEDS) {
-          leds[strip][i] = CRGB::Blue; // Mische mit Weiß für Helligkeit
+          leds[strip][i] = CRGB::Blue; // Setze den blauen Cursor
       }
   }
 }
