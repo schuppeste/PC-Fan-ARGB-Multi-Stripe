@@ -107,8 +107,6 @@ serialEvent(); // Check for serial input
         if (fanConfigs[i].index != -1 ) {
          fanConfigs[i].animationFunction(values[fanConfigs[i].index], fanConfigs[i].index);
         }
-        
-    
     }
 
 }
