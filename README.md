@@ -67,10 +67,10 @@ Arduino Configuration:
 1. Define used Pins in "TXB_" Constants
 2. Define Pinorder for readable Constants (FAN_)
 3. Define Fanconfigs:
-3.1 ```FanConfig fanConfigs[8] = {  {FAN_BACK     ,0, 75,      "Nuvoton NCT6687D",       "Temperature",  "CPU Core",                    0,  setRGBRingoneColorFading}}```
-3.2 ```FanConfig fanConfigs[8] = {  {Stripe-Index , min, max,  "Hardware Key"    ,       "Sensor-Type",  "Sensor Name",   Updated Value  ,  Function for Animation}}```
-3.3 min/max is a Scaled and Mapped Value to Expand this Range to 0-255 for Animation
-3.4 The Hardware Key, Sensor-Type ,and SensorName are defined in the CLI-Tool and was listed bei the "liste" Command 
+4. ```FanConfig fanConfigs[8] = {  {FAN_BACK     ,0, 75,      "Nuvoton NCT6687D",       "Temperature",  "CPU Core",                    0,  setRGBRingoneColorFading}}```
+5. ```FanConfig fanConfigs[8] = {  {Stripe-Index , min, max,  "Hardware Key"    ,       "Sensor-Type",  "Sensor Name",   Updated Value  ,  Function for Animation}}```
+6. min/max is a Scaled and Mapped Value to Expand this Range to 0-255 for Animation
+7. The Hardware Key, Sensor-Type ,and SensorName are defined in the CLI-Tool and was listed bei the "liste" Command 
 
 ![platine](https://github.com/user-attachments/assets/48abebe9-8365-444c-a97c-e301bdfea8fd)
 ![fritzing_rgb](https://github.com/user-attachments/assets/fc334b93-069c-4e9f-a7b8-2eccac0a516a)
