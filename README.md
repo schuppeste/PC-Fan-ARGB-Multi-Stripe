@@ -23,7 +23,36 @@ The C# application interfaces with LibreHardwareMonitor to:
 
 ## 🔄 How It Works
 
-### 1. **Startup**
+### 1. **Fan Configuration**
+The ESP32 defines the fan configuration using the `FanConfig` structure:
+```cpp
+struct FanConfig {
+  int index;          // Index of the LED strip
+  int min;            // Minimum temperature value
+  int max;            // Maximum temperature value
+  String hwKey;       // Hardware key (e.g., "Nuvoton NCT6687D")
+  String sensorType;  // Sensor type (e.g., "Temperature")
+  String sensorName;  // Sensor name (e.g., "CPU Core")
+  int value;          // Current mapped value (0-255)
+  void (*animationFunction)(int, int); // Pointer to the animation function
+};
+```
+
+The `fanConfigs` array defines the configuration for all connected fans:
+```cpp
+FanConfig fanConfigs[8] = {
+  {FAN_BACK, 0, 75, "Nuvoton NCT6687D", "Temperature", "CPU Core", 0, setRGBRingoneColorFading},
+  {FAN_FRONT_1, 50, 80, "Nuvoton NCT6687D", "Temperature", "CPU Core", 0, setRGBRingoneColorFading},
+  {FAN_FRONT_2, 0, 95, "Nuvoton NCT6687D", "Temperature", "VRM MOS", 0, setRGBRingoneColorFading},
+  {FAN_FRONT_3, 0, 70, "AMD Radeon RX 7600 XT", "Temperature", "GPU Core", 0, setRGBRingoneColorFading},
+  {FAN_CPU_1, 35, 80, "", "", "", 0, setRGBRingoneColorFading},
+  {FAN_CPU_2, 35, 80, "", "", "", 0, setRGBRingoneColorFading},
+  {FAN_CUSTOM_1, 35, 80, "", "", "", 0, setRGBRingoneColorFading},
+  {FAN_CUSTOM_2, 35, 80, "", "", "", 0, setRGBRingoneColorFading}
+};
+```
+
+### 2. **Startup**
 - The ESP32 sends its fan configuration as a JSON object to the C# application.
 - Example JSON sent by the ESP32:
   ```json
@@ -47,7 +76,7 @@ The C# application interfaces with LibreHardwareMonitor to:
   }
   ```
 
-### 2. **Sensor Monitoring**
+### 3. **Sensor Monitoring**
 - The C# application uses LibreHardwareMonitor to retrieve real-time sensor data.
 - Example sensor data:
   ```json
@@ -80,11 +109,11 @@ The C# application interfaces with LibreHardwareMonitor to:
   ]
   ```
 
-### 3. **Data Exchange**
+### 4. **Data Exchange**
 - The ESP32 requests specific sensor data by sending a JSON object.
 - The C# application filters the sensor data based on the request and sends the relevant data back to the ESP32.
 
-### 4. **RGB Control**
+### 5. **RGB Control**
 - The ESP32 maps the received temperature values to RGB animations.
 - Example mapping:
   - Green: Low temperature
