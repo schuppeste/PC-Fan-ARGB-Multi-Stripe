@@ -1,5 +1,3 @@
-Here's a GitHub description with setup instructions for the defines:
-
 # ESP32 RGB Fan Controller
 
 Control RGB PC fans with temperature-based animations using an ESP32 and FastLED. Connects to LibreHardwareMonitorLib in for real-time hardware monitoring.
