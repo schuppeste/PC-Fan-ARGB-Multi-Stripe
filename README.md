@@ -1,7 +1,8 @@
 # PC-Fan-ARGB-Multi-Stripe
-Simple Workaround for Multiple 1 End ARGB Fans in PC-Cases. (without OUT Pin , 3Pin)
+Simple Workaround for Multiple 1 End ARGB Fans in PC-Cases. (without OUT Pin , 3Pin) 
+Example Video: [![Example Video]()](https://www.youtube.com/shorts/zQxECo8_se8)
 
-A Arduino Controls Fan Color Animations controlled bei any available System,CPU/GPU Sensor values.
+A Arduino creates Fan Color Animations controlled bei any available System,CPU/GPU Sensor Value.
 
 How it works:
 
@@ -69,15 +70,6 @@ Arduino Configuration:
 3.2 ```FanConfig fanConfigs[8] = {  {Stripe-Index , min, max,  "Hardware Key"    ,       "Sensor-Type",  "Sensor Name",   Updated Value  ,  Function for Animation}}```
 3.3 min/max is a Scaled and Mapped Value to Expand this Range to 0-255 for Animation
 3.4 The Hardware Key, Sensor-Type ,and SensorName are defined in the CLI-Tool and was listed bei the "liste" Command 
-
-
-
-
-
-
-
-Example Video:
-[![Example Video]()](https://www.youtube.com/shorts/zQxECo8_se8)
 
 ![platine](https://github.com/user-attachments/assets/48abebe9-8365-444c-a97c-e301bdfea8fd)
 ![fritzing_rgb](https://github.com/user-attachments/assets/fc334b93-069c-4e9f-a7b8-2eccac0a516a)
