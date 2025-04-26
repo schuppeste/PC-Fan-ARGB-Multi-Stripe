@@ -1,100 +1,191 @@
-# ESP32 RGB Fan Controller
+# RGB Fan Controller - ESP32 & C# Integration
 
-Control RGB PC fans with temperature-based animations using an ESP32 and FastLED. Connects to LibreHardwareMonitorLib in for real-time hardware monitoring.
+This project consists of two components that work together to control RGB fans based on real-time hardware sensor data. The integration is achieved through JSON-based communication over a serial connection.
 
-## 🎯 Features
-- Temperature-based RGB animations
-- Multiple fan support (up to 8 channels)
-- Real-time hardware monitoring
-- JSON-based configuration
-- Supports various RGB fan models
+---
 
-## 🔧 Hardware Setup
+## 📂 Components
 
-### Pin Configuration
-```cpp
-// ESP32 Output Enable Pin
-#define TCB_OE_Pin 23  // Controls the signal output
+### 1. **ESP32 Firmware**
+The ESP32 acts as the RGB fan controller. It:
+- Manages up to 8 RGB fan channels.
+- Animates LEDs based on temperature values.
+- Sends its fan configuration to the C# application.
+- Receives real-time temperature data from the C# application.
 
-// ESP32 Data Pins for LED strips
-#define TXA_1 27       // Fan Channel 1
-#define TXA_2 25       // Fan Channel 2
-#define TXA_3 32       // Fan Channel 3
-#define TXA_4 17       // Fan Channel 4
-#define TXA_5 16       // Fan Channel 5
-#define TXA_6 22       // Fan Channel 6 (unused)
-#define TXA_7 21       // Fan Channel 7 (unused)
-#define TXA_8 33       // Fan Channel 8
-```
+### 2. **C# Application**
+The C# application interfaces with LibreHardwareMonitor to:
+- Monitor hardware sensors (CPU, GPU, motherboard, etc.).
+- Filter sensor data based on the ESP32's configuration.
+- Send temperature data to the ESP32 for RGB control.
 
-### Fan Configuration
-Define your fan layout using these indices (0-based):
-```cpp
-// Fan Position Definitions
-#define FAN_BACK 1     // Back exhaust fan
-#define FAN_FRONT_1 0  // Front intake fan 1
-#define FAN_FRONT_2 4  // Front intake fan 2
-#define FAN_FRONT_3 5  // Front intake fan 3
-#define FAN_CPU_1 2    // CPU fan 1
-#define FAN_CPU_2 3    // CPU fan 2
-#define FAN_CUSTOM_1 6 // Custom fan 1 (unused)
-#define FAN_CUSTOM_2 7 // Custom fan 2 (unused)
-```
+---
 
-### LED Configuration
-```cpp
-#define NUMm_LEDS 12    // Number of LEDs per fan
-#define NUMm_Strings 8  // Number of fan channels
-```
+## 🔄 How It Works
 
-## 📌 Pin Mapping Example
-```
-ESP32 -> Fan Channel
-GPIO27 -> Fan Channel 1 (FAN_FRONT_1)
-GPIO25 -> Fan Channel 2 (FAN_BACK)
-GPIO32 -> Fan Channel 3 (FAN_CPU_1)
-GPIO17 -> Fan Channel 4 (FAN_FRONT_2)
-GPIO16 -> Fan Channel 5 (FAN_FRONT_3)
-```
+### 1. **Startup**
+- The ESP32 sends its fan configuration as a JSON object to the C# application.
+- Example JSON sent by the ESP32:
+  ```json
+  {
+    "Nuvoton NCT6687D": [
+      {
+        "SensorName": "CPU Core",
+        "SensorType": "Temperature"
+      },
+      {
+        "SensorName": "VRM MOS",
+        "SensorType": "Temperature"
+      }
+    ],
+    "AMD Radeon RX 7600 XT": [
+      {
+        "SensorName": "GPU Core",
+        "SensorType": "Temperature"
+      }
+    ]
+  }
+  ```
+
+### 2. **Sensor Monitoring**
+- The C# application uses LibreHardwareMonitor to retrieve real-time sensor data.
+- Example sensor data:
+  ```json
+  [
+    {
+      "Hardware": "Nuvoton NCT6687D",
+      "Sensors": [
+        {
+          "SensorName": "CPU Core",
+          "SensorType": "Temperature",
+          "Value": "45.5"
+        },
+        {
+          "SensorName": "VRM MOS",
+          "SensorType": "Temperature",
+          "Value": "52.3"
+        }
+      ]
+    },
+    {
+      "Hardware": "AMD Radeon RX 7600 XT",
+      "Sensors": [
+        {
+          "SensorName": "GPU Core",
+          "SensorType": "Temperature",
+          "Value": "60.1"
+        }
+      ]
+    }
+  ]
+  ```
+
+### 3. **Data Exchange**
+- The ESP32 requests specific sensor data by sending a JSON object.
+- The C# application filters the sensor data based on the request and sends the relevant data back to the ESP32.
+
+### 4. **RGB Control**
+- The ESP32 maps the received temperature values to RGB animations.
+- Example mapping:
+  - Green: Low temperature
+  - Yellow: Medium temperature
+  - Red: High temperature
+
+---
 
 ## 🛠️ Setup Instructions
 
-1. **Hardware Connection**
-   - Connect the ESP32 pins to your RGB fan hub/controller
-   - Ensure common ground between ESP32 and fan controller
-   - Connect TCB_OE_Pin (GPIO23) to enable signal output
-
-2. **Fan Configuration**
-   - Modify the fan indices in the defines to match your setup
-   - Update the `fanConfigs` array with your hardware information:
+### ESP32 Firmware
+1. Flash the provided firmware to your ESP32.
+2. Connect the RGB fans to the appropriate GPIO pins as defined in the firmware:
    ```cpp
-   FanConfig fanConfigs[8] = {
-     {FAN_BACK,    0, 75, "Nuvoton NCT6687D", "Temperature", "CPU Core", 0, setRGBRingoneColorFading},
-     // ... additional fans
-   };
+   #define TXA_1 27  // Fan Channel 1
+   #define TXA_2 25  // Fan Channel 2
+   #define TXA_3 32  // Fan Channel 3
+   #define TXA_4 17  // Fan Channel 4
+   #define TXA_5 16  // Fan Channel 5
+   #define TXA_6 22  // Fan Channel 6 (unused)
+   #define TXA_7 21  // Fan Channel 7 (unused)
+   #define TXA_8 33  // Fan Channel 8
    ```
 
-3. **LED Strip Configuration**
-   - Update NUMm_LEDS if your fans have a different number of LEDs
-   - Modify NUMm_Strings based on number of channels you're using
+### C# Application
+1. Clone the repository and open the project in Visual Studio.
+2. Install the required NuGet packages:
+   - `LibreHardwareMonitorLib`
+   - `Newtonsoft.Json`
+   - `SerialPortLib`
+3. Configure the serial port in the code:
+   ```csharp
+   serialPort.SetPort("COM7", 115200);  // Replace "COM7" with your ESP32's COM port
+   ```
+4. Run the application.
 
-## 📝 Notes
-- Unused fan channels should be defined but not configured in fanConfigs
-- Ensure proper power supply for all connected fans
-- The TCB_OE_Pin must be HIGH for LED output
+---
 
-## ⚡ Power Requirements
-- Each RGB fan can draw up to 60mA per LED
-- Calculate total power requirements: `NUMm_LEDS * NUMm_Strings * 60mA`
-- Use appropriate power supply based on calculations
+## 📡 Communication Protocol
 
-## 🔗 Dependencies
-- FastLED Library
-- ArduinoJson Library
+### Commands
+1. **`liste`**: The ESP32 requests a full list of available sensors.
+2. **JSON Request**: The ESP32 requests specific sensor data by sending a JSON object.
+3. **Debugging**: The ESP32 can send debug messages for troubleshooting.
 
-## 🛟 Troubleshooting
-- If LEDs don't light up, check TCB_OE_Pin
-- Verify pin connections match the defines
-- Ensure fan indices in fanConfigs match physical connections
+### Message Format
+- All messages are sent as JSON strings.
+- Messages are terminated with `\r\n`.
 
-For more detailed information, check the code comments and documentation.
+---
+
+## 🔗 Example Workflow
+
+1. **ESP32 → C#**: Send fan configuration.
+   ```json
+   {
+     "Nuvoton NCT6687D": [
+       {
+         "SensorName": "CPU Core",
+         "SensorType": "Temperature"
+       }
+     ]
+   }
+   ```
+
+2. **C# → ESP32**: Respond with filtered sensor data.
+   ```json
+   [
+     {
+       "Hardware": "Nuvoton NCT6687D",
+       "Sensors": [
+         {
+           "SensorName": "CPU Core",
+           "SensorType": "Temperature",
+           "Value": "45.5"
+         }
+       ]
+     }
+   ]
+   ```
+
+3. **ESP32**: Update RGB animations based on the received temperature values.
+
+---
+
+## 🛠️ Debugging
+
+### ESP32
+- Use `Serial.print` to debug JSON messages and RGB animations.
+
+### C# Application
+- Use `Console.WriteLine` to debug received and sent JSON messages.
+- Check the COM port connection and ensure no other application is using it.
+
+---
+
+## 📋 Notes
+- Ensure the ESP32 and C# application use the same baud rate (115200).
+- The hardware names in the ESP32's JSON must match exactly with LibreHardwareMonitor's names.
+- Use a sufficient power supply for the RGB fans.
+
+---
+
+This project enables seamless integration between hardware monitoring and RGB fan control, providing a dynamic and visually appealing way to monitor your PC's performance.
