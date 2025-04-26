@@ -12,7 +12,7 @@ The Dotnet Tool wait for 3 Commands in Serial Communication.
 1. Show List "liste\r\n" -> Send a List with all available Hardware Sensors as JSON back to Serial and Console.
 2. For debug , "DEBUG............\r\n" -> Redirect theReceived Texts to System Console.
 3. Input, parsed Json for Filtered sensors and sends a Json with all defined Sensors.
-2.1 Example Json sending from Arduino to Console App: "
+4. Example Json sending from Arduino to Console App: "
 
 Question Json:
 {
