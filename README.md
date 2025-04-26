@@ -1,5 +1,6 @@
 # PC-Fan-ARGB-Multi-Stripe
 Simple Workaround for Multiple 1 End ARGB Fans in PC-Cases. (without OUT Pin , 3Pin) 
+
 Example Video: [![Example Video]()](https://www.youtube.com/shorts/zQxECo8_se8)
 
 A Arduino creates Fan Color Animations controlled bei any available System,CPU/GPU Sensor Value.
