@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO.Ports;
 using LibreHardwareMonitor.Hardware;
 using Newtonsoft.Json;
@@ -14,9 +14,12 @@ Computer computer = new Computer
     IsCpuEnabled = true,
     IsGpuEnabled = true,
     IsMotherboardEnabled = true,
-    IsControllerEnabled = false,
-    IsNetworkEnabled = false
+    IsControllerEnabled = true,
+    IsNetworkEnabled = true
 };
+String lastjson = "";
+
+
 // Listen to Serial Port events
 static string FilterSensorsByJson(Computer computer, Dictionary<string, List<Dictionary<string, string>>> selection)
 {
@@ -162,10 +165,31 @@ serialPort.MessageReceived += delegate (object sender, MessageReceivedEventArgs 
         receiveBuffer = receiveBuffer.Substring(endOfLineIndex + 2);
 
         // Nachricht in die Queue schreiben
+        if (completeMessage.Length > 2)
         messageQueue.Enqueue(completeMessage.Trim());
     }
 };
-serialPort.SetPort("COM7", 115200);
+String comport="";
+if (args.Length == 1 && args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
+{
+    Console.WriteLine("Usage:");
+    Console.WriteLine("  [COM-Port] - Specify the COM port to use (e.g., COM3).");
+    Console.WriteLine("  help       - Display this help message.");
+    Environment.Exit(0); // Beendet das Programm nach der Anzeige der Hilfe
+}
+else if (args.Length == 1)
+{
+    // Wenn ein Argument übergeben wurde, verwenden Sie es als COM-Port
+    comport = args[0];
+}else
+{
+    // Wenn kein Argument übergeben wurde, verwenden Sie den Standardwert
+    Console.WriteLine("The PortName cannot be empty. (Parameter 'PortName')"); // Ersetzen Sie dies durch den gewünschten Standardwert
+    return;
+}
+
+
+serialPort.SetPort(comport, 115200);
 
 // Connect the serial port
 serialPort.Connect();
@@ -175,6 +199,7 @@ computer.Open();
 computer.Accept(new UpdateVisitor());
 while (true)
 {
+
      if (messageQueue.Count > 0)
     {
         inputBuffer = messageQueue.Dequeue(); // Nachricht aus der Queue lesen
@@ -184,7 +209,7 @@ while (true)
          
             string sensorListJson = GenerateSensorList(computer);
             serialPort.SendMessage(System.Text.Encoding.UTF8.GetBytes(sensorListJson + "\r\n"));
-            //  Console.Write(sensorListJson + "\r\n");
+              Console.Write(sensorListJson + "\r\n");
         }
         else
                 if (inputBuffer.StartsWith("DEBUG", StringComparison.OrdinalIgnoreCase))
@@ -200,7 +225,7 @@ while (true)
             if (inputBuffer.StartsWith("{") && inputBuffer.EndsWith("}"))
         {
               computer.Accept(new UpdateVisitor());
-            inputBuffer = inputBuffer.Trim('\r', '\n');
+           inputBuffer = inputBuffer.Trim('\r', '\n');
           
             // Parse JSON input
             try
@@ -209,7 +234,7 @@ while (true)
                 var selection = ParseJsonInput(inputBuffer);
                 string filteredSensorsJson = FilterSensorsByJson(computer, selection).Replace("\r\n", String.Empty);
                 serialPort.SendMessage(System.Text.Encoding.UTF8.GetBytes(filteredSensorsJson + "\r\n"));
-                Console.WriteLine(filteredSensorsJson+"\r\n");
+                //Console.WriteLine(filteredSensorsJson+"\r\n");
             }
             catch (JsonReaderException ex)
             {
@@ -220,6 +245,8 @@ while (true)
             {
                 Console.WriteLine($"Error processing input: {ex.Message}");
             }
+            lastjson= inputBuffer;
+            inputBuffer = "";
         }
         else
         {
